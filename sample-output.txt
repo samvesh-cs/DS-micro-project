@@ -1,0 +1,35 @@
+===== LOW-COST MEDICINE INVENTORY =====
+1. Insert Medicine
+2. Search Medicine by ID
+3. Update Medicine Quantity
+4. Display Medicines in Sorted ID Order
+5. Exit
+Enter your choice: 4
+
+Medicines sorted by ID:
+---------------------------------------------------------------
+Medicine ID: 101 | Name: Cetirizine | Price: Rs. 18.00 | Quantity: 60
+Medicine ID: 102 | Name: AntisepticCream | Price: Rs. 55.00 | Quantity: 20
+Medicine ID: 103 | Name: Antacid | Price: Rs. 35.00 | Quantity: 30
+Medicine ID: 104 | Name: Paracetamol | Price: Rs. 25.00 | Quantity: 100
+Medicine ID: 105 | Name: ORSSachetPack | Price: Rs. 12.00 | Quantity: 70
+Medicine ID: 106 | Name: VitaminC | Price: Rs. 40.00 | Quantity: 25
+Medicine ID: 108 | Name: ORS | Price: Rs. 22.00 | Quantity: 45
+Medicine ID: 110 | Name: CoughSyrup | Price: Rs. 85.00 | Quantity: 15
+
+Enter your choice: 2
+Enter Medicine ID to search: 104
+Medicine ID: 104 | Name: Paracetamol | Price: Rs. 25.00 | Quantity: 100
+
+Enter your choice: 2
+Enter Medicine ID to search: 999
+Medicine not found.
+
+Enter your choice: 3
+Enter Medicine ID to update: 101
+Enter new quantity: 75
+Quantity updated successfully.
+
+Enter your choice: 1
+Enter Medicine ID: 101
+A medicine with this ID already exists.
