@@ -1,116 +1,130 @@
-# Low-Cost Medicine Inventory System
+# Low-Cost Medicine Inventory System (C + Binary Search Tree)
 
-A beginner-friendly, console-based medicine inventory management project
-written in C. The project uses a **Binary Search Tree (BST)** to store
-and search medicine records by their unique medicine ID.
+## 1. Project Overview
 
-## Project Overview
+The **Low-Cost Medicine Inventory System** is a menu-driven C program
+that manages medicine records using a **Binary Search Tree (BST)**. Each
+medicine is identified by a unique Medicine ID. The BST keeps records
+organized by ID, allowing the program to search for, insert, delete, and
+display medicine records.
 
-Small community pharmacies need a simple way to keep track of medicine
-stock, find medicine records quickly, identify medicines running low,
-and estimate the value of the inventory they currently hold.
+This is an educational data structures project. It demonstrates how a
+BST can be used in a practical inventory-management scenario.
 
-This project demonstrates how a data structure can help organize and
-manage inventory records without requiring a database, external API, or
-graphical interface.
+## 2. Project Objectives
 
-## Objectives
-
--   Store medicine records using a unique medicine ID.
--   Insert new medicines into the inventory.
--   Search for a medicine by its ID.
+-   Store medicine details in dynamically allocated BST nodes.
+-   Insert new medicine records while preventing duplicate IDs.
+-   Search for a medicine using its ID.
 -   Update the quantity of an existing medicine.
--   Display medicines in ascending order of medicine ID.
--   Alert the user when medicine quantity is below a chosen threshold.
--   Calculate the total value of the inventory using `price × quantity`.
--   Validate user input and reject invalid medicine names and values.
+-   Delete a medicine record while preserving BST ordering.
+-   Display all medicines in ascending Medicine ID order.
+-   Identify medicines whose stock is below a chosen threshold.
+-   Calculate the total value of the inventory.
+-   Validate user input and release dynamically allocated memory before
+    exit.
 
-## Features
+## 3. Technology Used
 
-### 1. Insert Medicine
+-   **Programming language:** C
+-   **Data structure:** Binary Search Tree (BST)
+-   **Memory management:** `malloc()` and `free()`
+-   **Standard libraries:** `stdio.h`, `stdlib.h`, `string.h`,
+    `ctype.h`, `errno.h`, `limits.h`, and `math.h`
+-   **Compiler:** GCC (MinGW on Windows can also be used)
 
-The user enters a medicine ID, name, price, and quantity. The program
-checks that: - The ID is positive and is not already present. - The name
-contains alphabetic letters only; spaces, numbers, and special
-characters are rejected. - The price is numeric, finite, and
-non-negative. - The quantity is a whole number and is not negative.
+## 4. Medicine Record Structure
 
-The program uses an `isInserted` flag to report whether the BST
-insertion succeeded.
+Each BST node stores the following information:
 
-### 2. Search Medicine by ID
-
-The program searches the BST using the medicine ID. If a matching record
-is found, its details are displayed; otherwise, the program reports that
-the medicine was not found.
-
-### 3. Update Medicine Quantity
-
-The user provides a medicine ID and a new quantity. The program updates
-the quantity only if the medicine exists and the new quantity is not
-negative. A quantity of zero is allowed.
-
-### 4. Display Inventory in Sorted Order
-
-The program uses **inorder traversal**---left subtree, current node,
-right subtree---to display medicines in ascending order of medicine ID.
-
-### 5. Low-Stock Alert
-
-The user chooses a stock threshold. The program displays medicines whose
-quantity is **strictly less than** the threshold. For example, with a
-threshold of `30`, a medicine with quantity `29` is displayed, but a
-medicine with quantity `30` is not.
-
-### 6. Total Inventory Value
-
-The program calculates the total value of all medicine stock using:
-
-`Total Inventory Value = Σ (Medicine Price × Quantity)`
-
-For example, if one medicine costs Rs. 25 per unit and the inventory
-contains 100 units, that medicine contributes Rs. 2,500 to the total.
-
-### 7. Exit and Memory Cleanup
-
-Before exiting, the program traverses the tree and frees the dynamically
-allocated nodes.
-
-## Data Structure Used: Binary Search Tree (BST)
-
-A **Binary Search Tree** is a tree in which each node has at most two
-children. For this project:
-
--   IDs smaller than a node's ID are stored in its left subtree.
--   IDs larger than a node's ID are stored in its right subtree.
--   Duplicate medicine IDs are not allowed.
-
-Each node stores:
-
-  Field          Description
-  -------------- --------------------------------------------
-  `medicineID`   Unique key used for ordering and searching
+  Field          Purpose
+  -------------- -------------------------------
+  `medicineID`   Unique ID used as the BST key
   `name`         Medicine name
   `price`        Price per unit
-  `quantity`     Current stock quantity
+  `quantity`     Number of units available
   `left`         Pointer to the left child
   `right`        Pointer to the right child
 
-### Why use a BST?
+### BST ordering rule
 
-A BST organizes records by medicine ID and supports searching and
-insertion without needing to shift array elements. Inorder traversal
-also gives sorted output naturally.
+-   IDs smaller than a node's ID are stored in its left subtree.
+-   IDs greater than a node's ID are stored in its right subtree.
+-   Duplicate IDs are not allowed.
 
-BST performance depends on its shape. A reasonably balanced BST can
-support search and insertion in approximately `O(log n)` time on
-average. In the worst case, when the tree becomes skewed, these
-operations can take `O(n)` time.
+This ordering helps the program find records by comparing IDs as it
+moves through the tree.
 
-## Sample Medicines
+## 5. Features and Menu Options
 
-The program loads eight sample records at startup so the features can be
-demonstrated immediately.
+  ------------------------------------------------------------------------
+                        Option Feature               Description
+  ---------------------------- --------------------- ---------------------
+                             1 Insert Medicine       Adds a new record
+                                                     after validating its
+                                                     ID, name, price, and
+                                                     quantity. Duplicate
+                                                     IDs are rejected.
+
+                             2 Search Medicine by ID Searches the BST and
+                                                     displays the matching
+                                                     record, if found.
+
+                             3 Update Medicine       Changes the quantity
+                               Quantity              of an existing
+                                                     medicine. Negative
+                                                     quantities are
+                                                     rejected.
+
+                             4 Display Medicines in  Uses inorder
+                               Sorted ID Order       traversal to display
+                                                     records in ascending
+                                                     ID order.
+
+                             5 Low-Stock Alert       Displays medicines
+                                                     whose quantity is
+                                                     strictly less than
+                                                     the entered
+                                                     threshold.
+
+                             6 Total Inventory Value Calculates the sum of
+                                                     `price × quantity`
+                                                     for all records.
+
+                             7 Delete Medicine       Removes a medicine by
+                                                     ID and maintains the
+                                                     BST structure.
+
+                             8 Exit                  Frees the BST nodes
+                                                     and exits the
+                                                     program.
+  ------------------------------------------------------------------------
+
+## 6. How Deletion Works
+
+The `deleteMedicine()` function handles the three standard BST deletion
+cases:
+
+1.  **Node has no children:** Free the node and return `NULL`.
+2.  **Node has one child:** Save the child pointer, free the node being
+    deleted, and return the child so it takes the deleted node's place.
+3.  **Node has two children:** Find the smallest node in the right
+    subtree using `findMin()`. Copy that successor's medicine details
+    into the current node, then delete the successor from the right
+    subtree.
+
+The caller assigns the returned pointer back to `root` or to the
+appropriate child pointer. This is important because deleting the root
+or a subtree root may change which node is at that position.
+
+Before calling `deleteMedicine()`, menu option 7 checks whether the ID
+exists using `search()`. If it does not exist, the program reports that
+nothing was deleted.
+
+## 7. Sample Data Loaded at Startup
+
+The program automatically inserts these eight sample records each time
+it starts:
 
     Medicine ID Medicine Name       Price (Rs.)   Quantity
   ------------- ----------------- ------------- ----------
@@ -123,178 +137,191 @@ demonstrated immediately.
             110 CoughSyrup                85.00         15
             105 ORSSachetPack             12.00         70
 
-These are synthetic demonstration records, not medical recommendations.
+These are sample records for demonstration, not a real pharmacy
+database.
 
-## Requirements
+## 8. Input Validation
 
--   A C compiler such as GCC.
--   A terminal or command prompt.
--   Standard C library support for the functions used by the program.
+The program includes input checks to reduce invalid input problems:
 
-The source uses standard headers including `stdio.h`, `stdlib.h`,
-`string.h`, `ctype.h`, `errno.h`, `limits.h`, and `math.h`.
+-   Integer input is checked for malformed values and values outside the
+    `int` range.
+-   Price input must be finite and non-negative.
+-   Medicine names must contain letters only, with no spaces, digits, or
+    special characters.
+-   Medicine IDs must be positive when adding a new record.
+-   Duplicate Medicine IDs are rejected.
+-   Quantity and low-stock threshold must not be negative.
+-   Overlong input lines are detected and rejected.
 
-## How to Compile and Run
+## 9. Important Functions
 
-Save the source code as `main.c`.
+  -----------------------------------------------------------------------
+  Function                            Responsibility
+  ----------------------------------- -----------------------------------
+  `readLine()`                        Reads a complete line and detects
+                                      overlong input.
 
-### Windows PowerShell (GCC / MinGW)
+  `readInt()`                         Reads and validates an integer.
+
+  `readPrice()`                       Reads and validates a finite,
+                                      non-negative price.
+
+  `isValidName()`                     Checks that a medicine name
+                                      contains letters only.
+
+  `readMedicineName()`                Reads and validates a medicine
+                                      name.
+
+  `createNode()`                      Allocates and initializes a BST
+                                      node.
+
+  `insert()`                          Inserts a medicine into the BST.
+
+  `search()`                          Finds a medicine by ID.
+
+  `findMin()`                         Finds the smallest ID in a subtree
+                                      by following left pointers.
+
+  `deleteMedicine()`                  Deletes a medicine while preserving
+                                      BST ordering.
+
+  `updateQuantity()`                  Updates the quantity of an existing
+                                      medicine.
+
+  `inorder()`                         Displays records in ascending ID
+                                      order.
+
+  `lowStockAlert()`                   Displays records below the selected
+                                      stock threshold.
+
+  `totalInventoryValue()`             Calculates the total value of all
+                                      stock.
+
+  `loadSampleData()`                  Loads the sample records at
+                                      startup.
+
+  `freeTree()`                        Frees all allocated nodes before
+                                      the program exits.
+  -----------------------------------------------------------------------
+
+## 10. Time Complexity
+
+Let `h` be the height of the BST and `n` be the number of medicine
+records.
+
+  Operation                         Time Complexity
+  --------------------------------- --------------------------
+  Search                            `O(h)`
+  Insert                            `O(h)`
+  Delete                            `O(h)`
+  Find minimum in a subtree         `O(h)` in the worst case
+  Display all medicines             `O(n)`
+  Low-stock alert                   `O(n)`
+  Calculate total inventory value   `O(n)`
+
+In a reasonably balanced BST, search, insertion, and deletion take
+approximately `O(log n)` time. In a skewed BST, the height can become
+`n`, making these operations `O(n)`. This implementation is a regular
+BST, not a self-balancing BST.
+
+## 11. How to Compile and Run
+
+### Windows (GCC / MinGW)
+
+Open a terminal in the directory containing `main.c`:
 
 ``` bash
-gcc main.c -o medicine_inventory.exe
+gcc -std=c11 -Wall -Wextra -pedantic main.c -o medicine_inventory.exe
 .\medicine_inventory.exe
 ```
 
-### Linux / macOS
+### Linux
 
 ``` bash
 gcc -std=c11 -Wall -Wextra -pedantic main.c -o medicine_inventory
 ./medicine_inventory
 ```
 
-If your compiler reports that math functions require a separate math
-library, try adding `-lm` at the end of the compile command.
+If your compiler reports a math-library linking error for `isfinite()`,
+try adding `-lm` at the end of the compile command.
 
-## Menu Options
-
-When the program starts, it displays the following menu:
-
-1.  Insert Medicine
-2.  Search Medicine by ID
-3.  Update Medicine Quantity
-4.  Display Medicines in Sorted ID Order
-5.  Low-Stock Alert
-6.  Total Inventory Value
-7.  Exit
-
-Choose an option by entering its number and follow the prompts.
-
-## Function Overview
+## 12. Suggested Test Cases
 
   -----------------------------------------------------------------------
-  Function                            Responsibility
-  ----------------------------------- -----------------------------------
-  `readLine()`                        Reads a complete line and detects
-                                      overlong input
-
-  `readInt()`                         Converts input into a checked
-                                      integer
-
-  `readPrice()`                       Reads and validates a finite,
-                                      non-negative price
-
-  `isValidName()`                     Checks that a name contains letters
-                                      only
-
-  `readMedicineName()`                Reads and validates the full
-                                      medicine name
-
-  `createNode()`                      Allocates and initializes a
-                                      medicine node
-
-  `insert()`                          Inserts a medicine into the BST and
-                                      reports insertion status
-
-  `search()`                          Finds a medicine by ID
-
-  `displayHeader()`                   Prints inventory table headings
-
-  `displayMedicine()`                 Prints one medicine record
-
-  `updateQuantity()`                  Updates stock for an existing
-                                      medicine
-
-  `inorder()`                         Displays medicines in sorted ID
-                                      order
-
-  `lowStockAlert()`                   Displays medicines below a chosen
-                                      threshold
-
-  `totalInventoryValue()`             Calculates the total stock value
-
-  `loadSampleData()`                  Inserts the eight sample medicines
-
-  `freeTree()`                        Releases the dynamically allocated
-                                      tree nodes
-
-  `main()`                            Loads sample data and runs the menu
-  -----------------------------------------------------------------------
-
-## Time Complexity
-
-Let `n` be the number of medicines and `h` be the height of the BST.
-
-  Operation                             Typical / average case   Worst case
-  ----------------------------------- ------------------------ ------------
-  Search by ID                                      `O(log n)`       `O(n)`
-  Insert                                            `O(log n)`       `O(n)`
-  Display all medicines (`inorder`)                     `O(n)`       `O(n)`
-  Low-stock alert                                       `O(n)`       `O(n)`
-  Total inventory value                                 `O(n)`       `O(n)`
-  Free the tree                                         `O(n)`       `O(n)`
-
-The BST is not self-balancing, so its height depends on the order in
-which IDs are inserted.
-
-## Suggested Test Cases
-
-  -----------------------------------------------------------------------
-  Test                    Input / action          Expected result
+  Test                    Action                  Expected result
   ----------------------- ----------------------- -----------------------
-  Search existing         Search ID `101`         Cetirizine record is
-  medicine                                        displayed
+  Insert a new ID         Add a medicine with a   Record is added
+                          unique positive ID and  
+                          valid details           
 
-  Search missing medicine Search ID `999`         "Medicine not found"
+  Insert duplicate ID     Add a medicine using an Duplicate is rejected
+                          ID already present      
+
+  Search existing ID      Search for ID `104`     Paracetamol record is
+                                                  displayed
+
+  Search missing ID       Search for an unused ID "Medicine not found"
                                                   message
 
-  Duplicate ID            Try inserting ID `101`  Insertion is rejected
+  Update quantity         Set an existing         Quantity is updated
+                          medicine's quantity to  
+                          a non-negative value    
 
-  Invalid ID              Enter `-5`              ID is rejected because
-                                                  it must be positive
+  Delete a leaf           Delete a node with no   Node is removed
+                          children                
 
-  Invalid name with       Enter `Vitamin C`       Name is rejected
-  spaces                                          
+  Delete a node with one  Delete a node with one  Child takes its place
+  child                   child                   
 
-  Invalid name with       Enter `Para123`         Name is rejected
-  digits                                          
+  Delete a node with two  Delete a node with two  Inorder-successor
+  children                children                method preserves BST
+                                                  ordering
 
-  Valid name              Enter `Paracetamol`     Name passes validation
+  Delete missing ID       Delete an ID not in the Program reports that
+                          tree                    nothing was deleted
 
-  Negative price          Enter `-10`             Price is rejected
+  Sorted display          Display all medicines   IDs appear in ascending
+                                                  order
 
-  Non-finite price        Enter `nan` or `inf`    Price is rejected
+  Low-stock alert         Enter a threshold       Only records with
+                                                  quantity below the
+                                                  threshold are shown
 
-  Negative quantity       Enter `-4`              Quantity is rejected
-
-  Update quantity         Update ID `101` to `0`  Quantity becomes zero
-
-  Low-stock alert         Use threshold `30`      Only quantities below
-                                                  30 are shown
-
-  Sorted display          Select option `4`       IDs are shown in
-                                                  ascending order
-
-  Total value             Select option `6`       Total of price
-                                                  multiplied by quantity
-                                                  is displayed
+  Exit                    Select option 8         Nodes are freed and the
+                                                  program exits
   -----------------------------------------------------------------------
 
+## 13. Limitations
 
-## Possible Future Improvements
+-   **No permanent storage:** Records are stored in RAM. Changes,
+    including deletions and quantity updates, are lost when the program
+    exits. The sample records are loaded again on the next run.
+-   **No self-balancing:** The BST can become skewed, which can make
+    operations slower.
+-   **Basic name rules:** Names containing spaces, hyphens, or digits
+    are not accepted by the current validation.
+-   **Floating-point price:** `float` is used for the unit price; real
+    financial software should use a suitable fixed-point or integer
+    representation for currency.
+-   **Educational use:** This program is a learning project, not a
+    production-ready pharmacy management system.
 
--   Store records in a file or database so changes persist after exit.
--   Add expiry-date tracking and alerts.
--   Add a delete-medicine operation.
--   Allow common medicine names containing spaces or hyphens while
-    validating them safely.
--   Balance the tree or use another data structure if the inventory
-    becomes large.
--   Improve table borders and add inventory summaries.
+## 14. Possible Future Improvements
 
-## Conclusion
+-   Save and load records using files or a database.
+-   Add medicine expiry dates and batch numbers.
+-   Support medicine names containing spaces.
+-   Use a self-balancing BST, such as an AVL tree, for more consistent
+    operation times.
+-   Add confirmation before deleting a record.
+-   Improve currency handling and add more comprehensive tests.
+
+## 15. Conclusion
 
 The Low-Cost Medicine Inventory System demonstrates how a Binary Search
-Tree can organize medicine records and support insertion, search,
-quantity updates, sorted display, low-stock alerts, and inventory
-valuation. It also practices recursion, pointers, dynamic memory
-allocation, string handling, and input validation in C.
+Tree can organize and manage medicine records in C. It combines
+insertion, searching, quantity updates, deletion, inorder traversal,
+low-stock alerts, and inventory-value calculation. The delete operation
+is particularly useful for learning how a BST maintains its ordering
+when nodes with zero, one, or two children are removed.

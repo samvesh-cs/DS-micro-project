@@ -215,6 +215,60 @@ struct Node* search(struct Node *root, int medicineID) {
     return search(root->right, medicineID);
 }
 
+// finds the smallest node in a subtree
+struct Node* findMin(struct Node *root) {
+    while (root != NULL && root->left != NULL) {
+        root = root->left;
+    }
+    return root;
+}
+
+// deletes a medicine by ID and returns the updated BST root
+struct Node* deleteMedicine(struct Node *root, int medicineID) {
+    struct Node *temp;
+
+    if (root == NULL) {
+        return NULL;
+    }
+
+    if (medicineID < root->medicineID) {
+        root->left = deleteMedicine(root->left, medicineID);
+    }
+    else if (medicineID > root->medicineID) {
+        root->right = deleteMedicine(root->right, medicineID);
+    }
+    else {
+        // Case 1: node has no children
+        if (root->left == NULL && root->right == NULL) {
+            free(root);
+            return NULL;
+        }
+        // Case 2: node has only a right child
+        else if (root->left == NULL) {
+            temp = root->right;
+            free(root);
+            return temp;
+        }
+        // Case 2: node has only a left child
+        else if (root->right == NULL) {
+            temp = root->left;
+            free(root);
+            return temp;
+        }
+        // Case 3: node has two children
+        else {
+            temp = findMin(root->right);
+            root->medicineID = temp->medicineID;
+            strcpy(root->name, temp->name);
+            root->price = temp->price;
+            root->quantity = temp->quantity;
+            root->right = deleteMedicine(root->right, temp->medicineID);
+        }
+    }
+
+    return root;
+}
+
 // displays the table heading and top border
 void displayHeader(void) {
     printf("\n");
@@ -344,7 +398,8 @@ int main(void) {
         printf("4. Display Medicines in Sorted ID Order\n");
         printf("5. Low-Stock Alert\n");
         printf("6. Total Inventory Value\n");
-        printf("7. Exit\n");
+        printf("7. Delete Medicine\n");
+        printf("8. Exit\n");
         printf("------------------------------------\n");
 
         inputStatus = readInt("Enter your choice: ", &choice);
@@ -527,12 +582,34 @@ int main(void) {
                 break;
 
             case 7:
+                inputStatus = readInt("Enter Medicine ID to delete: ", &medicineID);
+
+                if (inputStatus == 0) {
+                    freeTree(root);
+                    return 0;
+                }
+
+                if (inputStatus == -1) {
+                    break;
+                }
+
+                if (search(root, medicineID) == NULL) {
+                    printf("Medicine not found. Nothing was deleted.\n");
+                }
+                else {
+                    root = deleteMedicine(root, medicineID);
+                    printf("Medicine deleted successfully.\n");
+                }
+
+                break;
+
+            case 8:
                 freeTree(root);
                 printf("Exiting program.\n");
                 return 0;
 
             default:
-                printf("Invalid choice. Select 1 to 7.\n");
+                printf("Invalid choice. Select 1 to 8.\n");
         }
     }
 }
